@@ -36,9 +36,14 @@ Route: POST /api/interview/submit-answer (interview.route.js, isAuth + submitAns
   `interview.questions` throws "Cannot read properties of null (reading 'questions')".
 - Unrelated open upstream issues #316, #337, #338.
 
-## R level: R3
+## R level: R5
+- R5 (auto repro, one command): `cd server && npm test` → exit 0 = reproduced.
+  Harness: `server/test/repro-299.mjs` imports the real controller, stubs `Interview.findById`,
+  asserts HTTP status per scenario. Confirmed crash variants: questionIndex missing, 5, -1, "abc".
+  Exact issue text `Cannot set properties of undefined (setting 'score')` on the empty-answer path;
+  `Cannot read properties of undefined (reading 'timeLimit')` on the truthy-answer path.
+  Positive control (valid index + empty answer → 200) passes — no network involved.
 - R3 (clear repro steps from user): 4 concrete payloads + endpoint in issue body. ✅
-- R2 (exact non-default error text): `TypeError: Cannot set properties of undefined (setting 'score')` ✅
-- R5 (sandbox repro) is deferred to the reproduce step of this plan (later step).
-  Feasibility: unit-level harness importing the real controller with a stubbed Interview model
-  is possible (node v20 present; deps not installed yet, mongoose/pdfjs needed at import time).
+- R2 (exact non-default error text): confirmed in repro output. ✅
+- Note: with a truthy answer the crash surfaces at `question.timeLimit` (line after `question.score=0`),
+  with empty/missing answer at `question.score = 0` — same root cause, both covered by the harness.
