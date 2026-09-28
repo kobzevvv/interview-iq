@@ -228,6 +228,20 @@ export const submitAnswer = async (req, res) => {
     const { interviewId, questionIndex, answer, timeTaken } = req.body
 
     const interview = await Interview.findById(interviewId)
+    if (!interview) {
+      return res.status(404).json({ message: "Interview not found" })
+    }
+
+    if (
+      questionIndex == null ||
+      typeof questionIndex !== "number" ||
+      !Number.isInteger(questionIndex) ||
+      questionIndex < 0 ||
+      questionIndex >= interview.questions.length
+    ) {
+      return res.status(400).json({ message: "Invalid question index" })
+    }
+
     const question = interview.questions[questionIndex]
 
     // If no answer
