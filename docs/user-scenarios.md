@@ -5,7 +5,7 @@
 ## POST /api/interview/submit-answer
 
 - **S-299.1 — невалидный `questionIndex`** (missing / -1 / out-of-range / нечисловой):
-  сервер отвечает `400 {message:"Invalid questionIndex"}`, данные не изменяются, 500 нет.
+  сервер отвечает `400 {message:"Invalid question index"}`, данные не изменяются, 500 нет.
   (До fix: TypeError → 500 с текстом исключения.)
 - **S-299.2 — неизвестный `interviewId`**: сервер отвечает `404 {message:"Interview not found"}`.
 - **S-299.3 — валидный индекс + пустой ответ**: `200`, score 0,
